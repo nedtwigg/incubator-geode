@@ -25,7 +25,7 @@ buildscript {
     classpath "gradle.plugin.org.nosphere.apache:creadur-rat-gradle:0.2.0"
     classpath 'com.bmuschko:gradle-nexus-plugin:2.3.1'
     classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.0.1'
-    classpath "com.diffplug.gradle.spotless:spotless:2.3.0-SNAPSHOT"
+    classpath "com.diffplug.gradle.spotless:spotless:2.3.0"
   }
 }
 
@@ -96,6 +96,7 @@ subprojects {
       //importOrderFile 'spotless.importorder'                          // An import ordering file, exported from Eclipse
 
       googleJavaFormat()
+      paddedCell()
     }
   }
 }
